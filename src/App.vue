@@ -4,44 +4,17 @@
       .layout(v-for="components in layout")
         card(v-for="component in components",
         :title="component.title",
-        :key="component.id")
+        :key="component.id"
+        v-if="component.rule")
           component(v-bind:is="component.name")
 </template>
 
 <script>
+import {firebase, firebaseApp} from "./firebaseApp";
 import Sortable from 'sortablejs';
 import card from './components/card';
 import auth from './components/auth';
 import test from './components/test';
-
-var layout = [
-  [
-    {
-      "name": "auth",
-      "title": "Autenticación",
-      "id": 1
-    }
-  ],
-  [
-    {
-      "name": "test",
-      "title": "Test component",
-      "id": 2
-    }
-  ],
-  [
-    {
-      "name": "test",
-      "title": "Test component",
-      "id": 3
-    },
-    {
-      "name": "test",
-      "title": "Test component",
-      "id": 4
-    }
-  ]
-];
 
 export default {
   name: 'app',
@@ -68,10 +41,56 @@ export default {
         }
       });
     }
+    firebase.auth().onAuthStateChanged(this.onUserLogin);
+  },
+  methods: {
+    onUserLogin(user) {
+      if(user){
+        this.user = user;
+        this.loggedIn = true;
+      }
+    }
+  },
+  computed: {
+    layout(){
+      return [
+        [
+          {
+            name: "auth",
+            title: "Autenticación",
+            id: 1,
+            rule: (this.loggedIn === false)
+          },
+          {
+            name: "test",
+            title: "Test component",
+            id: 2,
+            rule: true
+          }
+        ],
+        [
+          {
+            name: "test",
+            title: "Test component",
+            id: 3,
+            rule: true
+          }
+        ],
+        [
+          {
+            name: "test",
+            title: "Test component",
+            id: 4,
+            rule: true
+          }
+        ]
+      ]
+    }
   },
   data(){
     return {
-      layout: layout
+      loggedIn: false,
+      user: undefined
     }
 	}
 }

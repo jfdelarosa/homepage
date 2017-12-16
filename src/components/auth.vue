@@ -1,11 +1,32 @@
 <template lang="pug">
   div
     p Para poder sincronizar tus datos debes de iniciar sesión con alguna de las siguientes plataformas:
-    .btn.btn--facebook Entrar con Facebook
+    .btn.btn--facebook(v-on:click="facebookAuth") Entrar con Facebook
 </template>
 <script>
+import {firebase, firebaseApp} from "../firebaseApp";
+var database = firebase.database();
+var provider = new firebase.auth.FacebookAuthProvider();
+provider.setCustomParameters({
+  'display': 'popup'
+});
+
 export default {
-  name: "auth"
+  name: "auth",
+  methods: {
+    facebookAuth(){
+      firebaseApp.auth().signInWithPopup(provider).then((result) =>{
+        if(result.additionalUserInfo.isNewUser){
+          database.ref("users/" + result.user.uid).set({
+            provider: result.additionalUserInfo.providerId,
+            name: result.user.displayName
+          });
+        }
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

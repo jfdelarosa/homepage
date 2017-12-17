@@ -1,9 +1,10 @@
 <template lang="pug">
-  div
+  card(title="Autenticación")
     p Para poder sincronizar tus datos debes de iniciar sesión con alguna de las siguientes plataformas:
     .btn.btn--facebook(v-on:click="facebookAuth") Entrar con Facebook
 </template>
 <script>
+import card from './card';
 import {firebase, firebaseApp} from "../firebaseApp";
 var database = firebase.database();
 var provider = new firebase.auth.FacebookAuthProvider();
@@ -13,6 +14,9 @@ provider.setCustomParameters({
 
 export default {
   name: "auth",
+  components: {
+    card
+  },
   methods: {
     facebookAuth(){
       firebaseApp.auth().signInWithPopup(provider).then((result) =>{

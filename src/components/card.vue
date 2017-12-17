@@ -1,10 +1,8 @@
 <template lang="pug">
   .card
-    .card__header(v-bind:class="{closed: !isVisible}")
+    .card__header.handle(v-bind:class="{closed: !isVisible}" v-on:click="toogleVisible")
       .card__header__left {{title}}
       .card__header__right
-        i.far(v-bind:class="[isVisible ? 'fa-caret-square-down' : 'fa-caret-square-up']" v-on:click="toogleVisible")
-        i.fas.fa-bars
     .card__body(v-bind:class="{closed: !isVisible}")
       slot
 </template>
@@ -20,7 +18,8 @@ export default {
   },
   data () {
     return {
-      isVisible: true
+      isVisible: true,
+      dropDownVisible: false
     }
   }
 }
@@ -42,19 +41,17 @@ export default {
       display: flex;
       color: #707070;
       font-weight: 500;
+      cursor: pointer;
       &.closed{
         border-radius: $border-radius;
         border: 1px solid $border-color;
       }
       &__right{
         margin-left: auto;
+        position: relative;
         i{
           color: #A0A1A8;
           margin-left: 0.5rem;
-          cursor: pointer;
-        }
-        .fa-bars{
-          cursor: move;
         }
       }
     }

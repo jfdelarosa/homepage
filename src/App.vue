@@ -4,25 +4,25 @@
       span(v-on:click="logout") Logout
     .grid
       .layout(v-for="components in layout")
-        card(v-for="component in components",
+        component(v-for="component in components",
         :title="component.title",
-        :key="component.id"
+        :key="component.id",
+        v-bind:is="component.name"
         v-if="component.rule")
-          component(v-bind:is="component.name")
 </template>
 
 <script>
 import {firebase, firebaseApp} from "./firebaseApp";
 import Sortable from 'sortablejs';
-import card from './components/card';
 import auth from './components/auth';
+import notepad from './components/notepad';
 import test from './components/test';
 
 export default {
   name: 'app',
   components: {
-    card,
     auth,
+    notepad,
     test
   },
   mounted(){
@@ -30,7 +30,7 @@ export default {
       Sortable.create(document.getElementsByClassName('layout')[i], {
         group: "ui",
         animation: 150,
-        handle: ".fa-bars",
+        handle: ".handle",
         onStart(){
           for(var i = 0; i <= 2; i++){
             document.getElementsByClassName("layout")[i].classList.add("drop");
@@ -67,7 +67,6 @@ export default {
         [
           {
             name: "auth",
-            title: "Autenticación",
             id: 1,
             rule: (this.loggedIn === false)
           },
@@ -80,8 +79,7 @@ export default {
         ],
         [
           {
-            name: "test",
-            title: "Test component",
+            name: "notepad",
             id: 3,
             rule: true
           }

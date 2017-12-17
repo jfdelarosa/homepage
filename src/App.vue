@@ -1,5 +1,7 @@
 <template lang="pug">
   #app
+    header
+      span(v-on:click="logout") Logout
     .grid
       .layout(v-for="components in layout")
         card(v-for="component in components",
@@ -46,9 +48,17 @@ export default {
   methods: {
     onUserLogin(user) {
       if(user){
+        console.log(user.uid);
         this.user = user;
         this.loggedIn = true;
       }
+    },
+    onUserLogout(){
+      this.user = undefined;
+      this.loggedIn = false;
+    },
+    logout(){
+      firebase.auth().signOut().then(this.onUserLogout);
     }
   },
   computed: {

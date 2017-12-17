@@ -1,10 +1,11 @@
 <template lang="pug">
   .card
-    .card__header
+    .card__header(v-bind:class="{closed: !isVisible}")
       .card__header__left {{title}}
       .card__header__right
+        i.far(v-bind:class="[isVisible ? 'fa-caret-square-down' : 'fa-caret-square-up']" v-on:click="toogleVisible")
         i.fas.fa-bars
-    .card__body
+    .card__body(v-bind:class="{closed: !isVisible}")
       slot
 </template>
 
@@ -12,8 +13,15 @@
 export default {
   name: 'card',
   props: ['title'],
+  methods: {
+    toogleVisible(){
+      this.isVisible = !this.isVisible;
+    }
+  },
   data () {
-    return {}
+    return {
+      isVisible: true
+    }
   }
 }
 </script>
@@ -34,10 +42,16 @@ export default {
       display: flex;
       color: #707070;
       font-weight: 500;
+      &.closed{
+        border-radius: $border-radius;
+        border: 1px solid $border-color;
+      }
       &__right{
         margin-left: auto;
         i{
           color: #A0A1A8;
+          margin-left: 0.5rem;
+          cursor: pointer;
         }
         .fa-bars{
           cursor: move;
@@ -49,6 +63,9 @@ export default {
       border: 1px solid $border-color;
       padding: 0.5rem;
       border-radius: 0 0 $border-radius $border-radius;
+      &.closed{
+        display: none;
+      }
     }
   }
 </style>

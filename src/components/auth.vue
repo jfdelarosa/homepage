@@ -17,7 +17,7 @@ export default {
     facebookAuth(){
       firebaseApp.auth().signInWithPopup(provider).then((result) =>{
         if(result.additionalUserInfo.isNewUser){
-          database.ref("users/" + result.user.uid).set({
+          database.ref("users/").child(result.user.uid).set({
             provider: result.additionalUserInfo.providerId,
             name: result.user.displayName
           });

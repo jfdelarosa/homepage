@@ -3,23 +3,18 @@
     .notepad
       .notepad__header.handle
         .notepad__border Bloc de notas
-      textarea.notepad__content(v-on:keyup="onKeyup" v-model="texto") {{val}}
+      textarea.notepad__content(v-on:keyup="onKeyup" v-model="texto")
   
 </template>
 <script>
-import {firebase, firebaseApp} from "../firebaseApp";
-var database = firebase.database();
 export default {
   name: "notepad",
-  props: ['uid', 'val'],
+  mounted(){
+    this.texto = localStorage.notepadText;
+  },
   methods: {
     onKeyup(){
-      if(this.uid){
-        database.ref("users/" + this.uid + "/notepad").update({
-          text: this.texto,
-          edited: Date.now()
-        });
-      }
+      localStorage.notepadText = this.texto;
     }
   },
   data(){

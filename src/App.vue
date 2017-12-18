@@ -11,18 +11,13 @@
 </template>
 
 <script>
-import {firebase, firebaseApp} from "./firebaseApp";
 import Sortable from 'sortablejs';
-import auth from './components/auth';
 import notepad from './components/notepad';
 import test from './components/test';
-
-var database = firebase.database();
 
 export default {
   name: 'app',
   components: {
-    auth,
     notepad,
     test
   },
@@ -44,33 +39,13 @@ export default {
         }
       });
     }
-    firebase.auth().onAuthStateChanged(this.onUserLogin);
-  },
-  methods: {
-    onUserLogin(user) {
-      if(user){
-        this.user = user;
-        this.loggedIn = true;
-        database.ref("users/" + this.user.uid + "/notepad").on('value', this.readNotepad);
-      }
-    },
-    readNotepad(res){
-      this.notepadText = res.val().text;
-    },
-    logout(){
-      firebase.auth().signOut().then(this.onUserLogout);
-    },
-    onUserLogout(){
-      this.user = {};
-      this.loggedIn = false;
-    }
   },
   computed: {
     layout(){
       return [
         [
           {
-            rule: (this.loggedIn === false),
+            rule: true,
             id: 1,
             props: {
               is: "auth"
@@ -90,8 +65,6 @@ export default {
             id: 3,
             props: {
               is: "notepad",
-              val: this.notepadText,
-              uid: this.user.uid
             }
           }
         ],
@@ -106,16 +79,7 @@ export default {
         ]
       ]
     }
-  },
-  data(){
-    return {
-      loggedIn: false,
-      notepadText: "",
-      user: {
-        uid: null
-      }
-    }
-	}
+  }
 }
 </script>
 

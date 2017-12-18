@@ -5,9 +5,8 @@
     .grid
       .layout(v-for="components in layout")
         component(v-for="component in components",
-        :title="component.title",
+        v-bind="component.props",
         :key="component.id",
-        v-bind:is="component.name"
         v-if="component.rule")
 </template>
 
@@ -17,6 +16,8 @@ import Sortable from 'sortablejs';
 import auth from './components/auth';
 import notepad from './components/notepad';
 import test from './components/test';
+
+var database = firebase.database();
 
 export default {
   name: 'app',
@@ -48,17 +49,20 @@ export default {
   methods: {
     onUserLogin(user) {
       if(user){
-        console.log(user.uid);
         this.user = user;
         this.loggedIn = true;
+        database.ref("users/" + this.user.uid + "/notepad").on('value', this.readNotepad);
       }
     },
-    onUserLogout(){
-      this.user = undefined;
-      this.loggedIn = false;
+    readNotepad(res){
+      this.notepadText = res.val().text;
     },
     logout(){
       firebase.auth().signOut().then(this.onUserLogout);
+    },
+    onUserLogout(){
+      this.user = {};
+      this.loggedIn = false;
     }
   },
   computed: {
@@ -66,30 +70,38 @@ export default {
       return [
         [
           {
-            name: "auth",
+            rule: (this.loggedIn === false),
             id: 1,
-            rule: (this.loggedIn === false)
+            props: {
+              is: "auth"
+            }
           },
           {
-            name: "test",
-            title: "Test component",
+            rule: true,
             id: 2,
-            rule: true
+            props: {
+              is: "test"
+            }
           }
         ],
         [
           {
-            name: "notepad",
+            rule: true,
             id: 3,
-            rule: true
+            props: {
+              is: "notepad",
+              val: this.notepadText,
+              uid: this.user.uid
+            }
           }
         ],
         [
           {
-            name: "test",
-            title: "Test component",
+            rule: true,
             id: 4,
-            rule: true
+            props: {
+              is: "test"
+            }
           }
         ]
       ]
@@ -98,7 +110,10 @@ export default {
   data(){
     return {
       loggedIn: false,
-      user: undefined
+      notepadText: "",
+      user: {
+        uid: null
+      }
     }
 	}
 }
@@ -114,6 +129,7 @@ export default {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-column-gap: 1rem;
+    padding: 1rem;
     .layout{
       border: 2px dashed transparent;
       &.drop{

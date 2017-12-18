@@ -23,7 +23,11 @@ export default {
         if(result.additionalUserInfo.isNewUser){
           database.ref("users/").child(result.user.uid).set({
             provider: result.additionalUserInfo.providerId,
-            name: result.user.displayName
+            name: result.user.displayName,
+            notepad: {
+              text: "Hola mundo",
+              edited: Date.now()
+            }
           });
         }
       }).catch((error) => {

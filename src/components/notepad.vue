@@ -3,12 +3,30 @@
     .notepad
       .notepad__header.handle
         .notepad__border Bloc de notas
-      .notepad__content(contenteditable) Hola mundo
+      textarea.notepad__content(v-on:keyup="onKeyup" v-model="texto") {{val}}
   
 </template>
 <script>
+import {firebase, firebaseApp} from "../firebaseApp";
+var database = firebase.database();
 export default {
-  name: "notepad"
+  name: "notepad",
+  props: ['uid', 'val'],
+  methods: {
+    onKeyup(){
+      if(this.uid){
+        database.ref("users/" + this.uid + "/notepad").update({
+          text: this.texto,
+          edited: Date.now()
+        });
+      }
+    }
+  },
+  data(){
+    return {
+      texto: this.val
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -28,6 +46,9 @@ export default {
     cursor: pointer;
   }
   &__content{
+    outline: none;
+    display: block;
+    box-sizing: border-box;
     line-height: 1.5rem;
     padding: 1rem 1rem;
     position: relative;
@@ -35,6 +56,8 @@ export default {
     border-top: none;
     background: #fdff9b;
     color: rgba(0, 0, 0, 0.8);
+    min-width: 100%;
+    resize:vertical;
     &::before{
       content:"";
       z-index: -1;

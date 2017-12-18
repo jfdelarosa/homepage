@@ -1,7 +1,5 @@
 <template lang="pug">
   #app
-    header
-      span(v-on:click="logout") Logout
     .grid
       .layout(v-for="components in layout")
         component(v-for="component in components",
@@ -14,11 +12,13 @@
 import Sortable from 'sortablejs';
 import notepad from './components/notepad';
 import test from './components/test';
+import todo from './components/todo';
 
 export default {
   name: 'app',
   components: {
     notepad,
+    todo,
     test
   },
   mounted(){
@@ -48,7 +48,7 @@ export default {
             rule: true,
             id: 1,
             props: {
-              is: "auth"
+              is: "test"
             }
           },
           {
@@ -73,7 +73,7 @@ export default {
             rule: true,
             id: 4,
             props: {
-              is: "test"
+              is: "todo"
             }
           }
         ]

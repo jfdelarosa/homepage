@@ -10,10 +10,14 @@
 export default {
   name: "notepad",
   mounted(){
+    var el = document.getElementsByClassName('notepad__content')[0];
+    el.style.height = el.scrollHeight + "px";
     this.texto = localStorage.notepadText;
   },
   methods: {
     onKeyup(){
+      var el = document.getElementsByClassName('notepad__content')[0];
+      el.style.height = el.scrollHeight + "px";
       localStorage.notepadText = this.texto;
     }
   },
@@ -52,6 +56,7 @@ export default {
     background: #fdff9b;
     color: rgba(0, 0, 0, 0.8);
     min-width: 100%;
+    max-height: 70vh;
     resize:vertical;
     &::before{
       content:"";
